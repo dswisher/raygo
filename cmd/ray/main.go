@@ -4,6 +4,9 @@ package main
 
 import (
 	"fmt"
+	"image"
+	"image/color"
+	"image/png"
 	"os"
 )
 
@@ -17,24 +20,35 @@ func main() {
 	const nx = 200
 	const ny = 100
 
-	f, err := os.Create("/mnt/d/WSL/ray-out/sample.ppm") // TODO: read from command-line
+	img := image.NewRGBA(image.Rect(0, 0, nx, ny))
+
+	if len(os.Args) < 2 {
+		fmt.Fprintf(os.Stderr, "You must specify the name of the output file!\n")
+		os.Exit(1)
+	}
+
+	fname := os.Args[1]
+
+	f, err := os.Create(fname)
 	check(err)
 
 	defer f.Close()
 
-	fmt.Fprintf(f, "P3\n%d %d\n255\n", nx, ny)
-
-	for j := ny - 1; j >= 0; j-- {
+	for j := 0; j < ny; j++ {
 		for i := 0; i < nx; i++ {
 			r := float64(i) / float64(nx)
-			g := float64(j) / float64(ny)
+			g := float64(ny-j) / float64(ny)
 			b := 0.2
 
 			ir := uint8(255.99 * r)
 			ig := uint8(255.99 * g)
 			ib := uint8(255.99 * b)
 
-			fmt.Fprintf(f, "%d %d %d\n", ir, ig, ib)
+			c := color.RGBA{ir, ig, ib, 255}
+
+			img.Set(i, j, c)
 		}
 	}
+
+	png.Encode(f, img)
 }
