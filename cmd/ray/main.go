@@ -8,6 +8,8 @@ import (
 	"image/color"
 	"image/png"
 	"os"
+
+	"github.com/dswisher/raygo/pkg/raygo"
 )
 
 func check(e error) {
@@ -36,13 +38,12 @@ func main() {
 
 	for j := 0; j < ny; j++ {
 		for i := 0; i < nx; i++ {
-			r := float64(i) / float64(nx)
-			g := float64(ny-j) / float64(ny)
-			b := 0.2
 
-			ir := uint8(255.99 * r)
-			ig := uint8(255.99 * g)
-			ib := uint8(255.99 * b)
+			v := raygo.Vector{float64(i) / float64(nx), float64(ny-j) / float64(ny), 0.2}
+
+			ir := uint8(255.99 * v.X)
+			ig := uint8(255.99 * v.Y)
+			ib := uint8(255.99 * v.Z)
 
 			c := color.RGBA{ir, ig, ib, 255}
 
